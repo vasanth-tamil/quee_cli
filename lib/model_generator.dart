@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:quee_cli/core/file_generate.dart';
-import 'package:quee_cli/core/terminal.dart';
 import 'package:quee_cli/helper/name_helper.dart';
+import 'package:quee_cli/quee.dart';
 
 class ModelGenerator {
   final String jsonString;
@@ -158,25 +156,6 @@ class ModelGenerator {
   void generate() {
     String modelCode = jsonToModel();
 
-    FileGenerate fileGenerate = FileGenerate();
-
-    // check directory
-    if (FileGenerate().directoryExists(outputPath) == false) {
-      bool isConfirm = Terminal.askConfirmation(
-        'Can i create directory (Yes/no) ?',
-      );
-
-      if (isConfirm) {
-        FileGenerate().createDirectory(outputPath);
-      } else {
-        Terminal.printError('User declined to create directory.');
-        exit(0);
-      }
-    }
-
-    String fileName =
-        '$outputPath/${NameHelper().toCamelCaseToUnderscore(className)}.dart';
-    fileGenerate.createFile(fileName, modelCode);
-    Terminal.printSuccess('$fileName Model successfully generated.');
+    FilenameMaker().createFile(outputPath, className, modelCode);
   }
 }
