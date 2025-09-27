@@ -97,7 +97,7 @@ void main(List<String> arguments) {
     if (results.flag('model')) {
       String name = '';
       String jsonPath = '';
-      String outputPath = 'examples/models';
+      String outputPath = 'example/models';
 
       // check
       print('');
