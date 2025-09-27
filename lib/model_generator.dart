@@ -162,11 +162,11 @@ class ModelGenerator {
 
     // check directory
     if (FileGenerate().directoryExists(outputPath) == false) {
-      stdout.write("Can i create directory (Yes/no) ? ");
-      String input = stdin.readLineSync() ?? '';
-      List<String> confirmationList = ['y', 'Y', 'Yes', 'yes'];
+      bool isConfirm = Terminal.askConfirmation(
+        'Can i create directory (Yes/no) ?',
+      );
 
-      if (confirmationList.contains(input)) {
+      if (isConfirm) {
         FileGenerate().createDirectory(outputPath);
       } else {
         Terminal.printError('User declined to create directory.');
@@ -177,7 +177,6 @@ class ModelGenerator {
     String fileName =
         '$outputPath/${NameHelper().toCamelCaseToUnderscore(className)}.dart';
     fileGenerate.createFile(fileName, modelCode);
-    // print(modelCode);
     Terminal.printSuccess('$fileName Model successfully generated.');
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:quee_cli/quee.dart';
 
 class FileHelper {

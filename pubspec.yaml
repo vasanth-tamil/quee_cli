@@ -9,6 +9,10 @@ environment:
 
 dependencies:
   args: ^2.5.0
+  cli_util: ^0.4.2
+
+executables:
+  quee_cli: quee
 
 dev_dependencies:
   lints: ^5.0.0

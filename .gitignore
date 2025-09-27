@@ -1,1 +1,5 @@
 .dart_tool/
+*.exe
+*.js
+*.js.map
+.DS_Store

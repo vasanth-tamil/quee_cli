@@ -1,4 +1,15 @@
+import 'dart:io';
+
 class Terminal {
+  List<String> confirmationList = ['y', 'yes'];
+
+  static bool askConfirmation(String message) {
+    stdout.write("You sure (Yes/no) ? ");
+    String input = stdin.readLineSync() ?? '';
+
+    return Terminal().confirmationList.contains(input.toLowerCase().trim());
+  }
+
   static void printError(String message) {
     print('\x1B[31m✖ $message\x1B[0m');
   }
