@@ -1,5 +1,5 @@
 class NameHelper {
-  String createFileName(String name, {String suffix = ''}) {
+  static String createFileName(String name, {String suffix = ''}) {
     return '${name.toLowerCase()}_$suffix.dart';
   }
 

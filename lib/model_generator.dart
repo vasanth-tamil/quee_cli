@@ -155,7 +155,6 @@ class ModelGenerator {
 
   void generate() {
     String modelCode = jsonToModel();
-
-    FilenameMaker().createFile(outputPath, className, modelCode);
+    FileGenerator().createFile(outputPath, className, modelCode);
   }
 }

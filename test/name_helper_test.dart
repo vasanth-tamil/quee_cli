@@ -6,7 +6,10 @@ void main() {
     final nameHelper = NameHelper();
 
     test('createFileName creates a valid file name', () {
-      expect(nameHelper.createFileName('test', suffix: 'page'), 'test_page.dart');
+      expect(
+        NameHelper.createFileName('test', suffix: 'page'),
+        'test_page.dart',
+      );
     });
 
     test('toCapitalize capitalizes the first letter', () {
@@ -14,14 +17,20 @@ void main() {
       expect(nameHelper.toCapitalize('string_name'), 'String_name');
     });
 
-    test('toPascalCase converts from snake_case and kebab-case to PascalCase', () {
-      expect(nameHelper.toPascalCase('string-home'), 'StringHome');
-      expect(nameHelper.toPascalCase('string_home'), 'StringHome');
-    });
+    test(
+      'toPascalCase converts from snake_case and kebab-case to PascalCase',
+      () {
+        expect(nameHelper.toPascalCase('string-home'), 'StringHome');
+        expect(nameHelper.toPascalCase('string_home'), 'StringHome');
+      },
+    );
 
-    test('toCamelCase converts from snake_case and kebab-case to camelCase', () {
-      expect(nameHelper.toCamelCase('string-home'), 'stringHome');
-      expect(nameHelper.toCamelCase('string_home'), 'stringHome');
-    });
+    test(
+      'toCamelCase converts from snake_case and kebab-case to camelCase',
+      () {
+        expect(nameHelper.toCamelCase('string-home'), 'stringHome');
+        expect(nameHelper.toCamelCase('string_home'), 'stringHome');
+      },
+    );
   });
 }
