@@ -3,6 +3,17 @@ class NameHelper {
     return '${name.toLowerCase()}_$suffix.dart';
   }
 
+  String toClassName(String input) {
+    final cleaned = input.replaceAll(RegExp(r'[_\-]+'), ' ').trim();
+    final parts = cleaned.split(RegExp(r' +'));
+    final className =
+        parts.map((word) {
+          if (word.isEmpty) return '';
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        }).join();
+    return className.replaceAll(RegExp(r'[^A-Za-z0-9]'), '');
+  }
+
   String toCamelCaseToUnderscore(String str) =>
       str
           .replaceAllMapped(

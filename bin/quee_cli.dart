@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:quee_cli/helper/file_helper.dart';
+import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
+import 'package:quee_cli/widget_generator.dart';
 
 const String version = '0.0.1';
 
@@ -91,6 +95,28 @@ void main(List<String> arguments) {
     }
     if (results.flag('verbose')) {
       verbose = true;
+    }
+
+    // Page
+    if (results.flag('page')) {
+      if (results.rest.isEmpty) {
+        Terminal.printError('No page name provided.');
+        exit(1);
+      }
+
+      String name = results.rest[0];
+      PageGenerator(name).generate();
+    }
+
+    // Model
+    if (results.flag('widget')) {
+      if (results.rest.isEmpty) {
+        Terminal.printError('No model name provided.');
+        exit(1);
+      }
+
+      String name = results.rest[0];
+      WidgetGenerator(name).generate();
     }
 
     // test
