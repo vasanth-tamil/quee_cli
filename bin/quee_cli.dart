@@ -4,6 +4,7 @@ import 'package:args/args.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
+import 'package:quee_cli/service_generator.dart';
 import 'package:quee_cli/widget_generator.dart';
 
 const String version = '0.0.1';
@@ -117,6 +118,36 @@ void main(List<String> arguments) {
 
       String name = results.rest[0];
       WidgetGenerator(name).generate();
+    }
+
+    // Service
+    if (results.flag('service')) {
+      if (results.rest.isEmpty) {
+        Terminal.printError('No Service name provided.');
+        exit(1);
+      }
+
+      String name = results.rest[0];
+      ServiceGenerator serviceGenerator = ServiceGenerator(name);
+
+      if (results.rest.length < 2) {
+        Terminal.printWarning('No functions provided.');
+        bool useDefault = Terminal.askConfirmation('Use default functions');
+
+        if (!useDefault) return;
+
+        serviceGenerator.generate([
+          'fetchAll:get',
+          'fetchOne:get',
+          'fetchById:get',
+          'create:post',
+          'update:put',
+          'delete:delete',
+        ]);
+        return;
+      }
+
+      serviceGenerator.generate(results.rest.sublist(1));
     }
 
     // test

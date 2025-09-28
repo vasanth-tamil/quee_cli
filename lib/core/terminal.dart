@@ -3,8 +3,8 @@ import 'dart:io';
 class Terminal {
   List<String> confirmationList = ['y', 'yes'];
 
-  static bool askConfirmation(String message) {
-    stdout.write("You sure (Yes/no) ? ");
+  static bool askConfirmation(String? message) {
+    stdout.write("${message ?? 'You sure'} (Yes/no) ? ");
     String input = stdin.readLineSync() ?? '';
 
     return Terminal().confirmationList.contains(input.toLowerCase().trim());
