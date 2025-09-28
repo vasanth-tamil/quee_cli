@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
@@ -118,6 +119,24 @@ void main(List<String> arguments) {
 
       String name = results.rest[0];
       WidgetGenerator(name).generate();
+    }
+
+    // Controller
+    if (results.flag('controller')) {
+      if (results.rest.isEmpty) {
+        Terminal.printError('No Controller name provided.');
+        exit(1);
+      }
+
+      String name = results.rest[0];
+
+      String service = Terminal.askMessageWithInput('Your Service name ? ');
+      ControllerGenerator controllerGenerator = ControllerGenerator(
+        name,
+        service,
+      );
+
+      controllerGenerator.generate([]);
     }
 
     // Service

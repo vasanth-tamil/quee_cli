@@ -10,6 +10,16 @@ class Terminal {
     return Terminal().confirmationList.contains(input.toLowerCase().trim());
   }
 
+  static String askMessageWithInput(String message) {
+    stdout.write(message);
+    String input = stdin.readLineSync() ?? '';
+
+    if (input.isEmpty) {
+      askConfirmation(message);
+    }
+    return input.toLowerCase().trim();
+  }
+
   static void printError(String message) {
     print('\x1B[31m✖ $message\x1B[0m');
   }
