@@ -47,7 +47,6 @@ class ModelGenerator {
 
     StringBuffer buffer = StringBuffer();
     String name = NameHelper().toPascalCase(nameStr);
-    print(name);
 
     buffer.writeln('class $name {');
 
