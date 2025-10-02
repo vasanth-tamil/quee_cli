@@ -1,6 +1,6 @@
 name: quee_cli
 description: A command line interface for quee package that provides basic argument parsing.
-version: 0.0.3-beta
+version: 0.0.4
 
 repository: https://github.com/vasanth-tamil/quee_cli
 
