@@ -2,11 +2,15 @@ import 'package:quee_cli/helper/code_helper.dart';
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
+/// Generates a service class.
 class ServiceGenerator {
+  /// The name of the service.
   String name = '';
 
+  /// Creates a new instance of [ServiceGenerator].
   ServiceGenerator(this.name);
 
+  /// Generates a function for the service.
   StringBuffer getFunctionCode({
     required String name,
     String method = 'get',
@@ -36,6 +40,7 @@ class ServiceGenerator {
     return buffer;
   }
 
+  /// Generates the code for the service class.
   String getServiceCode(List<String> functions) {
     StringBuffer buffer = StringBuffer();
 
@@ -62,6 +67,7 @@ class ServiceGenerator {
     return buffer.toString();
   }
 
+  /// Generates the service file.
   void generate(List<String> functionList) {
     Terminal.printBold('\n1.Service Generated.');
 

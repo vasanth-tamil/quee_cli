@@ -1,11 +1,15 @@
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
+/// Generates a Flutter page.
 class PageGenerator {
+  /// The name of the page.
   String name = '';
 
+  /// Creates a new instance of [PageGenerator].
   PageGenerator(this.name);
 
+  /// Generates the code for a stateful widget page.
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
@@ -44,6 +48,7 @@ class PageGenerator {
     return buffer.toString();
   }
 
+  /// Generates the code for a stateless widget page.
   String getStalessCode() {
     final buffer = StringBuffer();
 
@@ -70,6 +75,7 @@ class PageGenerator {
     return buffer.toString();
   }
 
+  /// Generates the page files.
   void generate() {
     Terminal.printBold('\n1.Stateful Page Generated.');
     String statefulCode = getStatfulCode();

@@ -1,11 +1,15 @@
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
+/// Generates a Flutter widget.
 class WidgetGenerator {
+  /// The name of the widget.
   String name = '';
 
+  /// Creates a new instance of [WidgetGenerator].
   WidgetGenerator(this.name);
 
+  /// Generates the code for a stateful widget.
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
@@ -40,6 +44,7 @@ class WidgetGenerator {
     return buffer.toString();
   }
 
+  /// Generates the code for a stateless widget.
   String getStalessCode() {
     final buffer = StringBuffer();
 
@@ -59,6 +64,7 @@ class WidgetGenerator {
     return buffer.toString();
   }
 
+  /// Generates the widget files.
   void generate() {
     Terminal.printBold('\n1.Stateful Widget Generated.');
     String statefulCode = getStatfulCode();

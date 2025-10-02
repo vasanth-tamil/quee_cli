@@ -2,13 +2,24 @@ import 'dart:convert';
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
+/// Generates a Dart model class from a JSON string.
 class ModelGenerator {
+  /// The JSON string to convert to a model.
   final String jsonString;
+
+  /// The name of the class to generate.
   final String className;
+
+  /// The path to output the generated file.
   final String outputPath;
+
+  /// Whether to include a `toJson` method in the generated class.
   final bool toJson;
+
+  /// Whether to include a `fromJson` factory constructor in the generated class.
   final bool fromJson;
 
+  /// Creates a new instance of [ModelGenerator].
   ModelGenerator(
     this.jsonString, {
     this.className = 'test',
@@ -19,6 +30,7 @@ class ModelGenerator {
 
   final Map<String, String> _generatedClasses = {};
 
+  /// Converts the JSON string to a Dart model.
   String jsonToModel() {
     Map<String, dynamic> map = jsonDecode(jsonString);
 
@@ -27,6 +39,7 @@ class ModelGenerator {
     return _generatedClasses.values.join('\n\n');
   }
 
+  /// Generates a class from a JSON map.
   void _generateClass(String nameStr, Map<String, dynamic> jsonMap) {
     if (_generatedClasses.containsKey(nameStr)) {
       return; // Avoid duplicates
@@ -126,6 +139,7 @@ class ModelGenerator {
     });
   }
 
+  /// Infers the type of a value.
   String _getType(String key, dynamic value, String parentClass) {
     if (value is int) {
       return 'int';
@@ -149,11 +163,13 @@ class ModelGenerator {
     return 'dynamic';
   }
 
+  /// Checks if a type is a custom type.
   bool _isCustomType(String type) {
     return !['int', 'double', 'bool', 'String', 'dynamic'].contains(type) &&
         !type.startsWith('List<dynamic>');
   }
 
+  /// Generates the model file.
   void generate() {
     String modelCode = jsonToModel();
     FileGenerator().createFile(outputPath, className, modelCode);
