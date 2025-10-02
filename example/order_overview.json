@@ -1,0 +1,89 @@
+{
+  "id": 2,
+  "code": "OR-12-10001",
+  "coupon_code": null,
+  "sub_total": 200,
+  "discount": 0,
+  "taxes": 0,
+  "delivery_charge": 147,
+  "total": 347,
+  "status": "packed",
+  "payment_method": "cash_on_delivery",
+  "payment_status": "pending",
+  "transaction_data": [],
+  "tracking_number": null,
+  "pending_date": "2025-09-12 12:12:02",
+  "packed_date": "2025-09-12 12:12:33",
+  "shipped_date": null,
+  "cancelled_date": null,
+  "delivered_date": null,
+  "returned_date": null,
+  "processing_date": null,
+  "address_id": 1,
+  "user_id": 2,
+  "store_id": 2,
+  "created_at": "2025-09-12T12:12:02.000000Z",
+  "updated_at": "2025-09-12T12:12:33.000000Z",
+  "customer": {
+    "id": 2,
+    "f_name": "Vasanth",
+    "l_name": null,
+    "phone": null,
+    "email": "vasanthvk410@gmail.com"
+  },
+  "order_items": [
+    {
+      "id": 4,
+      "price": 100,
+      "qty": 2,
+      "offer": 0,
+      "total": 200,
+      "product_id": 27,
+      "variant_id": null,
+      "order_id": 2,
+      "created_at": "2025-09-12T12:12:02.000000Z",
+      "attributes": [],
+      "product": {
+        "id": 27,
+        "name": "Single Product Test New (U)",
+        "image": "HNjIsG3ZZE.png",
+        "hsn_code": null,
+        "description": "Simple Description (U)",
+        "store_id": 2,
+        "category_id": 13,
+        "default_variant": null,
+        "category": {
+          "id": 13,
+          "name": "Printed"
+        },
+        "store": {
+          "id": 2,
+          "name": "Thanjavur Store",
+          "is_open": false
+        }
+      }
+    }
+  ],
+  "address": {
+    "id": 1,
+    "name": "Wyatt Sanders",
+    "phone": "6385659856",
+    "address_line_1": "37 South Nobel Court",
+    "address_line_2": "Nisi ab quae pariatu",
+    "postal_code": "466123",
+    "country_id": 102,
+    "state_id": 1640,
+    "user_id": 2,
+    "created_at": "2025-09-08T15:27:18.000000Z",
+    "updated_at": "2025-09-08T15:27:18.000000Z",
+    "full_address": "37 South Nobel Court, Nisi ab quae pariatu, Andaman and Nicobar Islands, 466123, India",
+    "country": {
+      "id": 102,
+      "name": "India"
+    },
+    "state": {
+      "id": 1640,
+      "name": "Andaman and Nicobar Islands"
+    }
+  }
+}

@@ -64,6 +64,7 @@ quee_cli s <name> fetch:get
 ```shell
 quee_cli generate <name>
 quee_cli g <name>
+dart run quee_cli:quee_cli -m name:orderOverview json:example/order_overview.json
 ```
 
 **Widget**

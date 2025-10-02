@@ -27,7 +27,13 @@ class NameHelper {
     return str[0].toUpperCase() + str.substring(1);
   }
 
+  bool isPascalCase(String str) {
+    return RegExp(r'^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)*$').hasMatch(str);
+  }
+
   String toPascalCase(String str) {
+    if (isPascalCase(str)) return str;
+
     return str
         .split(RegExp(r'[-_]'))
         .map((s) {

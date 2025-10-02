@@ -8,7 +8,7 @@ import 'package:quee_cli/quee.dart';
 import 'package:quee_cli/service_generator.dart';
 import 'package:quee_cli/widget_generator.dart';
 
-const String version = '0.0.1';
+const String version = '0.0.3';
 
 ArgParser buildParser() {
   return ArgParser()
@@ -173,7 +173,7 @@ void main(List<String> arguments) {
     if (results.flag('model')) {
       String name = '';
       String jsonPath = '';
-      String outputPath = 'example/models';
+      String outputPath = 'output';
 
       // check
       print('');
@@ -189,16 +189,18 @@ void main(List<String> arguments) {
           outputPath = cmd[1];
         }
       }
-      print('Name: $name');
-      print('Json: $jsonPath');
-      print('Out : $outputPath');
-      print('');
 
       if (name.isEmpty || jsonPath.isEmpty) {
         Terminal.printError('Please provide a name and json path.');
+        Terminal.printInfo(
+          'Example: dart run quee_cli --model name:user json:example/user.json',
+        );
         return;
       }
 
+      print('Name: $name');
+      print('Json: $jsonPath');
+      print('Out : $outputPath');
       String jsonString = FileHelper.readJson(jsonPath);
 
       var modelGenerate = ModelGenerator(

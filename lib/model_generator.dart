@@ -34,6 +34,7 @@ class ModelGenerator {
 
     StringBuffer buffer = StringBuffer();
     String name = NameHelper().toPascalCase(nameStr);
+    print(name);
 
     buffer.writeln('class $name {');
 
@@ -41,7 +42,11 @@ class ModelGenerator {
     jsonMap.forEach((key, value) {
       String fieldName = NameHelper().toCamelCase(key);
       String type = _getType(key, value, name);
-      buffer.writeln('  $type? $fieldName;');
+      if (type == 'dynamic') {
+        buffer.writeln('  $type $fieldName;');
+      } else {
+        buffer.writeln('  $type? $fieldName;');
+      }
     });
 
     // Constructor
@@ -82,27 +87,23 @@ class ModelGenerator {
     // toJson method
     if (toJson) {
       buffer.writeln('  Map<String, dynamic> toJson() {');
-      buffer.writeln(
-        '    final Map<String, dynamic> data = <String, dynamic>{};',
-      );
+      buffer.writeln('    return {');
       jsonMap.forEach((key, value) {
         String fieldName = NameHelper().toCamelCase(key);
-        buffer.writeln('    if ($fieldName != null) {');
         if (_isCustomType(_getType(key, value, name))) {
           if (_getType(key, value, name).startsWith('List<')) {
             buffer.writeln(
-              '      data[\'$key\'] = $fieldName!.map((v) => v.toJson()).toList();',
+              '      \'$key\': $fieldName!.map((v) => v.toJson()).toList(),',
             );
           } else {
-            buffer.writeln('      data[\'$key\'] = $fieldName!.toJson();');
+            buffer.writeln('      \'$key\': $fieldName!.toJson(),');
           }
         } else {
-          buffer.writeln('      data[\'$key\'] = $fieldName;');
+          buffer.writeln('      \'$key\': $fieldName,');
         }
-        buffer.writeln('    }');
       });
-      buffer.writeln('    return data;');
-      buffer.writeln('  }');
+      buffer.writeln('      };');
+      buffer.writeln('    }');
     }
 
     buffer.write('}');
