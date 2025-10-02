@@ -48,4 +48,11 @@ class NameHelper {
     if (pascal.isEmpty) return '';
     return pascal[0].toLowerCase() + pascal.substring(1);
   }
+
+  String toDashCase(String str) {
+    return str
+        .replaceAll(RegExp(r'[ _]+'), '-')
+        .replaceAllMapped(RegExp(r'(?<=[a-z0-9])(?=[A-Z])'), (match) => '-')
+        .toLowerCase();
+  }
 }

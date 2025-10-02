@@ -5,6 +5,7 @@ import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
+import 'package:quee_cli/route_generator.dart';
 import 'package:quee_cli/service_generator.dart';
 import 'package:quee_cli/widget_generator.dart';
 
@@ -97,6 +98,17 @@ void main(List<String> arguments) {
     }
     if (results.flag('verbose')) {
       verbose = true;
+    }
+
+    // Route
+    if (results.flag('route')) {
+      if (results.rest.isEmpty) {
+        Terminal.printError('No route name provided.');
+        exit(1);
+      }
+
+      List<String> routes = results.rest;
+      RouteGenerator(routes, 'example/app_routes.dart').generate();
     }
 
     // Page
