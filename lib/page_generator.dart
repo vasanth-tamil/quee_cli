@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
@@ -13,7 +15,7 @@ class PageGenerator {
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper().toClassName('$name-age');
+    String className = NameHelper().toClassName('$name-page');
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(
@@ -77,12 +79,40 @@ class PageGenerator {
 
   /// Generates the page files.
   void generate() {
-    Terminal.printBold('\n1.Stateful Page Generated.');
-    String statefulCode = getStatfulCode();
-    print(statefulCode);
+    String outputPath = 'output/pages';
+    String fileName = NameHelper.createFileName(name, suffix: 'page');
 
-    Terminal.printBold('2.Stateless Page Generated.');
-    String statelessCode = getStalessCode();
-    print(statelessCode);
+    List<Map<String, dynamic>> options = [
+      {
+        'label': 'Stateful Page.',
+        'value': '1',
+        'action': () {
+          Terminal.printBold('\n1.Stateful Page Generated.');
+          String statefulCode = getStatfulCode();
+          print(statefulCode);
+          FileGenerator().createFile(outputPath, fileName, statefulCode);
+        },
+      },
+      {
+        'label': 'Stateless Page.',
+        'value': '2',
+        'action': () {
+          Terminal.printBold('\n2.Stateless Page Generated.');
+          String statelessCode = getStalessCode();
+          print(statelessCode);
+          FileGenerator().createFile(outputPath, fileName, statelessCode);
+        },
+      },
+      {
+        'label': 'Exit.',
+        'value': '0',
+        'action': () {
+          Terminal.printText('Bye.');
+          exit(0);
+        },
+      },
+    ];
+
+    Terminal.askOptionsWithInput('Page Options:', options);
   }
 }

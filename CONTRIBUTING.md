@@ -40,6 +40,14 @@ We welcome pull requests! If you would like to contribute code, please follow th
     ```bash
     dart pub get
     ```
+    
+## How to Run ?
+
+To run the tests, use the following command:
+
+```bash
+dart run
+```
 
 ## Running Tests
 

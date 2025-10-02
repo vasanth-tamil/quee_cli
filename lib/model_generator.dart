@@ -171,6 +171,10 @@ class ModelGenerator {
   /// Generates the model file.
   void generate() {
     String modelCode = jsonToModel();
-    FileGenerator().createFile(outputPath, className, modelCode);
+
+    String fileName = NameHelper.createFileName(className, suffix: 'model');
+    String outputPath = 'output/models';
+
+    FileGenerator().createFile(outputPath, fileName, modelCode);
   }
 }
