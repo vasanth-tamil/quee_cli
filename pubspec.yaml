@@ -12,7 +12,7 @@ dependencies:
   cli_util: ^0.4.2
 
 executables:
-  quee_cli: quee
+  quee: quee_cli
 
 dev_dependencies:
   lints: ^5.0.0
