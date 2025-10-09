@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/page_generator.dart';
@@ -81,11 +82,45 @@ void printUsage(ArgParser argParser) {
   print(argParser.usage);
 }
 
-void main(List<String> arguments) {
+void main(List<String> arguments) async {
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
     bool verbose = false;
+
+    if (results.rest.isEmpty) {
+      List<String> availableOptions = [
+        'Controllers',
+        'Models',
+        'Pages',
+        'Services',
+        'Routes',
+      ];
+      final option =
+          Select(
+            prompt: 'What do you want to do?',
+            options: availableOptions,
+          ).interact();
+
+      final optionSelected = availableOptions[option];
+      final gift =
+          Spinner(
+            icon: '⚡',
+            leftPrompt: (done) => '', // prompts are optional
+            rightPrompt:
+                (state) => switch (state) {
+                  SpinnerStateType.inProgress => 'Processing...',
+                  SpinnerStateType.done => 'Done $optionSelected !',
+                  SpinnerStateType.failed => 'Failed!',
+                },
+          ).interact();
+
+      await Future.delayed(const Duration(seconds: 3));
+      gift.done();
+      // print(optionSelected);
+
+      return;
+    }
 
     // Process the parsed arguments.
     if (results.flag('help')) {

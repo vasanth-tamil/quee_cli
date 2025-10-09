@@ -10,6 +10,7 @@ environment:
 dependencies:
   args: ^2.5.0
   cli_util: ^0.4.2
+  interact_cli: ^2.4.0
 
 executables:
   quee: quee_cli

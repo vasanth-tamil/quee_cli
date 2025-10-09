@@ -31,6 +31,22 @@ class FileHelper {
     print('Directory deleted: $directory');
   }
 
+  static Future<List<File>> listFilesInDirectory(String path) async {
+    final dir = Directory(path);
+    final List<File> files = [];
+
+    await for (FileSystemEntity entity in dir.list(
+      recursive: false,
+      followLinks: false,
+    )) {
+      if (entity is File) {
+        files.add(entity);
+      }
+    }
+
+    return files;
+  }
+
   static String readJson(String path) {
     try {
       return File(path).readAsStringSync();
