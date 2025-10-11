@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:args/args.dart';
 import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
@@ -7,9 +5,7 @@ import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/helper/validation_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
-import 'package:quee_cli/route_generator.dart';
 import 'package:quee_cli/service_generator.dart';
-import 'package:quee_cli/widget_generator.dart';
 
 const String version = '0.0.3';
 
@@ -28,40 +24,10 @@ ArgParser buildParser() {
       help: 'Show additional command output.',
     )
     ..addFlag(
-      'model',
-      abbr: 'm',
-      negatable: false,
-      help: 'Generates a new model.',
-    )
-    ..addFlag(
-      'page',
-      abbr: 'p',
-      negatable: false,
-      help: 'Generates a new page.',
-    )
-    ..addFlag(
       'widget',
       abbr: 'w',
       negatable: false,
       help: 'Generates a new widget.',
-    )
-    ..addFlag(
-      'generate',
-      abbr: 'g',
-      negatable: false,
-      help: 'Generates a new model.',
-    )
-    ..addFlag(
-      'service',
-      abbr: 's',
-      negatable: false,
-      help: 'Generates a new service.',
-    )
-    ..addFlag(
-      'controller',
-      abbr: 'c',
-      negatable: false,
-      help: 'Generates a new controller.',
     )
     ..addFlag(
       'route',
@@ -95,6 +61,7 @@ void main(List<String> arguments) async {
         'Models',
         'Pages',
         'Services',
+        'Dialogues',
         'Routes',
       ];
       final option =
@@ -179,6 +146,75 @@ void main(List<String> arguments) async {
 
         ControllerGenerator(className, serviceName).generate(sortedFunctions);
       } else if (optionSelected == 'Models') {
+        final jsonFiles = await FileHelper.listJsonFilesInDirectory(
+          'example',
+        ).then((value) => value.map((e) => e.path.split('/').last).toList());
+
+        final selectedJsonFiles =
+            MultiSelect(
+              prompt: 'Select your json file ?',
+              options: jsonFiles,
+              defaults:
+                  jsonFiles.map((i) => jsonFiles.indexOf(i) == 0).toList(),
+            ).interact();
+
+        // Functions
+        List<Map<String, String>> models = [];
+
+        for (var index in selectedJsonFiles) {
+          String jsonFile = jsonFiles.elementAt(index);
+          String defaultClassName = jsonFile
+              .split(r'\')
+              .last
+              .split('.')[0]
+              .replaceAll('_', '-');
+          String className =
+              Input(
+                prompt: 'Enter your model name',
+                defaultValue: defaultClassName,
+                validator: (String input) {
+                  if (input.trim().isEmpty) {
+                    throw ValidationError('Input cannot be empty.');
+                  } else if (ValidationHelper.isValidInput(input)) {
+                    return true;
+                  } else {
+                    throw ValidationError(
+                      'Invalid input provided. Only lowercase letters are allowed.',
+                    );
+                  }
+                },
+              ).interact();
+
+          models.add({'json': jsonFile, 'name': className});
+        }
+
+        // toJson, fromJson
+        final options = ['toJson', 'fromJson'];
+        final selectedOptions =
+            MultiSelect(
+              prompt: 'Do you want to generate Options ?',
+              options: options,
+              defaults: [true, true],
+            ).interact();
+
+        bool isToJson = (selectedOptions.indexOf(0) == 0);
+        bool isFromJson = (selectedOptions.indexOf(1) == 1);
+
+        for (var model in models) {
+          String jsonPath = model['json'].toString();
+          String name = model['name'].toString();
+
+          String jsonString = FileHelper.readJson(jsonPath);
+
+          var modelGenerate = ModelGenerator(
+            jsonString,
+            className: name,
+            outputPath: 'output/models',
+            toJson: isToJson,
+            fromJson: isFromJson,
+          );
+          modelGenerate.generate();
+        }
       } else if (optionSelected == 'Pages') {
         final pages = ['Stateful Page', 'Stateless Page'];
 
@@ -205,9 +241,6 @@ void main(List<String> arguments) async {
               options: pages,
               initialIndex: 0,
             ).interact();
-
-        String pageType = pages.elementAt(selection);
-        print(pageType);
 
         PageGenerator(name).generate(selection);
       } else if (optionSelected == 'Services') {
@@ -301,92 +334,9 @@ void main(List<String> arguments) async {
       print('quee_cli version: $version');
       return;
     }
+
     if (results.flag('verbose')) {
       verbose = true;
-    }
-
-    // Route
-    if (results.flag('route')) {
-      if (results.rest.isEmpty) {
-        Terminal.printError('No route name provided.');
-        exit(1);
-      }
-
-      List<String> routes = results.rest;
-      RouteGenerator(routes, 'example/app_routes.dart').generate();
-    }
-
-    // Model
-    if (results.flag('widget')) {
-      if (results.rest.isEmpty) {
-        Terminal.printError('No model name provided.');
-        exit(1);
-      }
-
-      String name = results.rest[0];
-      WidgetGenerator(name).generate();
-    }
-
-    // Controller
-    if (results.flag('controller')) {
-      if (results.rest.isEmpty) {
-        Terminal.printError('No Controller name provided.');
-        exit(1);
-      }
-
-      String name = results.rest[0];
-
-      String service = Terminal.askMessageWithInput('Your Service name ? ');
-      ControllerGenerator controllerGenerator = ControllerGenerator(
-        name,
-        service,
-      );
-
-      controllerGenerator.generate([]);
-    }
-
-    // test
-    if (results.flag('model')) {
-      String name = '';
-      String jsonPath = '';
-      String outputPath = 'output';
-
-      // check
-      print('');
-      for (String command in results.rest) {
-        final cmd = command.split(':');
-        if (cmd[0] == 'name') {
-          name = cmd[1];
-        }
-        if (cmd[0] == 'json') {
-          jsonPath = cmd[1];
-        }
-        if (cmd[0] == 'out') {
-          outputPath = cmd[1];
-        }
-      }
-
-      if (name.isEmpty || jsonPath.isEmpty) {
-        Terminal.printError('Please provide a name and json path.');
-        Terminal.printInfo(
-          'Example: dart run quee_cli --model name:user json:example/user.json',
-        );
-        return;
-      }
-
-      print('Name: $name');
-      print('Json: $jsonPath');
-      print('Out : $outputPath');
-      String jsonString = FileHelper.readJson(jsonPath);
-
-      var modelGenerate = ModelGenerator(
-        jsonString,
-        className: name,
-        outputPath: outputPath,
-        toJson: true,
-        fromJson: true,
-      );
-      modelGenerate.generate();
     }
 
     // test

@@ -75,7 +75,7 @@ class PageGenerator {
     return buffer.toString();
   }
 
-  /// Generates the page files.
+  // Generates the page files.
   void generate(int pageType) {
     String outputPath = 'output/pages';
     String fileName = "${NameHelper.toUnderscoreName(name)}.dart";

@@ -172,8 +172,8 @@ class ModelGenerator {
   void generate() {
     String modelCode = jsonToModel();
 
-    String fileName = NameHelper.createFileName(className, suffix: 'model');
     String outputPath = 'output/models';
+    String fileName = '${NameHelper.toUnderscoreName(className)}.dart';
 
     FileGenerator().createFile(outputPath, fileName, modelCode);
   }

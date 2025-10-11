@@ -65,9 +65,12 @@ class ServiceGenerator {
 
   // Generates the service file.
   void generate(List<Map<String, String>> functionList) {
-    Terminal.printBold('\n1.Service Generated.');
+    String serviceCode = getServiceCode(functionList);
 
-    String defaultCode = getServiceCode(functionList);
-    print(defaultCode);
+    String outputPath = 'output/services';
+    String fileName = '${NameHelper.toUnderscoreName(name)}.dart';
+
+    Terminal.printBold('\n');
+    FileGenerator().createFile(outputPath, fileName, serviceCode);
   }
 }
