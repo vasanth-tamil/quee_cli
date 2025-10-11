@@ -15,7 +15,7 @@ class PageGenerator {
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper().toClassName('$name-page');
+    String className = NameHelper.toClassName('$name-page');
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(
@@ -54,7 +54,7 @@ class PageGenerator {
   String getStalessCode() {
     final buffer = StringBuffer();
 
-    String className = NameHelper().toClassName('$name-page');
+    String className = NameHelper.toClassName('$name-page');
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(

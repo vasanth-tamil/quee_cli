@@ -13,7 +13,7 @@ class WidgetGenerator {
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper().toClassName(name);
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(
@@ -48,7 +48,7 @@ class WidgetGenerator {
   String getStalessCode() {
     final buffer = StringBuffer();
 
-    String className = NameHelper().toClassName(name);
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln("");

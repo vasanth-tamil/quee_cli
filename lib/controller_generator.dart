@@ -17,20 +17,25 @@ class ControllerGenerator {
     StringBuffer buffer = StringBuffer();
 
     buffer.writeln("");
-    buffer.writeln("  $name() async {");
+    buffer.writeln("  /* $name */");
+    buffer.writeln(
+      "  Future<void> ${NameHelper().toCamelCase(name)}() async {",
+    );
     buffer.writeln("    isTestLoading.toggle();");
     buffer.writeln("");
     buffer.writeln("    try {");
     buffer.writeln("      /* Service Call */");
-    buffer.writeln("      final response = await _${service}Service.test();");
+    buffer.writeln(
+      "      final response = await _${NameHelper().toCamelCase(service)}.test();",
+    );
     buffer.writeln("");
     buffer.writeln("      if (response.isSuccess) {");
-    buffer.writeln("        print(response.data); exhilarating");
+    buffer.writeln("        LogHelper.printJSON(response.data);");
     buffer.writeln("      } else {");
-    buffer.writeln("        print(response.error);");
+    buffer.writeln("        LogHelper.print(response.error.toString());");
     buffer.writeln("      }");
     buffer.writeln("    } catch (e) {");
-    buffer.writeln("      print(e);");
+    buffer.writeln("      LogHelper.print(e.toString());");
     buffer.writeln("    }");
     buffer.writeln("");
     buffer.writeln("    isTestLoading.toggle();");
@@ -43,11 +48,11 @@ class ControllerGenerator {
   String getControllerCode(List<String> functions) {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper().toClassName('$name-controller');
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:get/get.dart';");
     buffer.writeln(
-      "import 'package:template/services/${service.toLowerCase()}_service.dart';",
+      "import 'package:template/services/${NameHelper.toUnderscoreName(service)}.dart';",
     );
     buffer.writeln("");
     buffer.writeln("class $className extends GetxController {");
@@ -55,7 +60,7 @@ class ControllerGenerator {
     buffer.writeln("");
     buffer.writeln("  /* Services */");
     buffer.writeln(
-      "  final ${NameHelper().toCapitalize(service)}Service _${service.toLowerCase()}Service = ${NameHelper().toCapitalize(service)}Service();",
+      "  final ${NameHelper.toClassName(service)} _${NameHelper().toCamelCase(service)} = ${NameHelper.toClassName(service)}();",
     );
     buffer.writeln("");
     buffer.writeln("  /* Controllers */");
@@ -63,7 +68,10 @@ class ControllerGenerator {
     buffer.writeln("  /* Models */");
     buffer.writeln("");
     buffer.writeln("  /* Actions */");
-    buffer.writeln(getFunctionCode(name: 'test'));
+    buffer.writeln(
+      functions.map((func) => getFunctionCode(name: func)).join(''),
+    );
+    buffer.writeln("");
     buffer.writeln("}");
 
     return buffer.toString();

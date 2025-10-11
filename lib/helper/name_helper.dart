@@ -3,7 +3,16 @@ class NameHelper {
     return '${name.toLowerCase()}_$suffix.dart';
   }
 
-  String toClassName(String input) {
+  static String toUnderscoreName(String name) {
+    return name
+        .replaceAllMapped(
+          RegExp(r'(?<=[a-z])(?=[A-Z-])'),
+          (match) => '_${match.group(0)!.toLowerCase()}',
+        )
+        .replaceAll('-', '');
+  }
+
+  static String toClassName(String input) {
     final cleaned = input.replaceAll(RegExp(r'[_\-]+'), ' ').trim();
     final parts = cleaned.split(RegExp(r' +'));
     final className =

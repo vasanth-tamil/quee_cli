@@ -4,6 +4,8 @@ import 'package:args/args.dart';
 import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/helper/file_helper.dart';
+import 'package:quee_cli/helper/name_helper.dart';
+import 'package:quee_cli/helper/validation_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
 import 'package:quee_cli/route_generator.dart';
@@ -103,21 +105,93 @@ void main(List<String> arguments) async {
           ).interact();
 
       final optionSelected = availableOptions[option];
-      final gift =
-          Spinner(
-            icon: '⚡',
-            leftPrompt: (done) => '', // prompts are optional
-            rightPrompt:
-                (state) => switch (state) {
-                  SpinnerStateType.inProgress => 'Processing...',
-                  SpinnerStateType.done => 'Done $optionSelected !',
-                  SpinnerStateType.failed => 'Failed!',
-                },
-          ).interact();
 
-      await Future.delayed(const Duration(seconds: 3));
-      gift.done();
-      // print(optionSelected);
+      if (optionSelected == 'Controllers') {
+        // Class Name
+        String className =
+            Input(
+              prompt: 'Enter your controller name',
+              validator: (String input) {
+                if (input.trim().isEmpty) {
+                  throw ValidationError('Input cannot be empty.');
+                } else if (ValidationHelper.isValidInput(input)) {
+                  return true;
+                } else {
+                  throw ValidationError(
+                    'Invalid input provided. Only lowercase letters are allowed.',
+                  );
+                }
+              },
+            ).interact();
+
+        // Service Name
+        String serviceName =
+            Input(
+              prompt: 'Enter your service name',
+              validator: (String input) {
+                if (input.trim().isEmpty) {
+                  throw ValidationError('Input cannot be empty.');
+                } else if (ValidationHelper.isValidInput(input)) {
+                  return true;
+                } else {
+                  throw ValidationError(
+                    'Invalid input provided. Only lowercase letters are allowed.',
+                  );
+                }
+              },
+            ).interact();
+
+        // Functions
+        List<String> functions = [];
+        bool isContinue;
+
+        do {
+          String funcName =
+              Input(
+                prompt: 'Enter your function name',
+                validator: (String input) {
+                  if (input.trim().isEmpty) {
+                    throw ValidationError('Input cannot be empty.');
+                  } else if (ValidationHelper.isValidInput(input)) {
+                    return true;
+                  } else {
+                    throw ValidationError(
+                      'Invalid input provided. Only lowercase letters are allowed.',
+                    );
+                  }
+                },
+              ).interact();
+
+          functions.add(funcName);
+          isContinue =
+              Confirm(
+                prompt: 'Do you want to add another function ?',
+                defaultValue: true,
+                waitForNewLine: true,
+              ).interact();
+        } while (isContinue == true);
+
+        final sortedFunctions =
+            Sort(
+              prompt: 'Sort your functions ?',
+              options: functions,
+              showOutput: false,
+            ).interact();
+
+        ControllerGenerator(className, serviceName).generate(sortedFunctions);
+      } else if (optionSelected == 'Models') {
+      } else if (optionSelected == 'Pages') {
+      } else if (optionSelected == 'Services') {
+        final methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+
+        final selection =
+            Select(
+              prompt: 'Your service method ?',
+              options: methods,
+            ).interact();
+
+        print(selection);
+      } else if (optionSelected == 'Routes') {}
 
       return;
     }

@@ -44,7 +44,7 @@ class ServiceGenerator {
   String getServiceCode(List<String> functions) {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper().toClassName('$name-service');
+    String className = NameHelper.toClassName('$name-service');
 
     buffer.writeln("import 'package:template/constants/app_apis.dart';");
     buffer.writeln("import 'package:template/helpers/request_helper.dart';");
