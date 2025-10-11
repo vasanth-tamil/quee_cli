@@ -1,4 +1,3 @@
-import 'package:quee_cli/helper/code_helper.dart';
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
@@ -16,21 +15,19 @@ class ServiceGenerator {
     String method = 'get',
     String url = 'ApiConstants.fetch(id)',
     bool isAuth = false,
-    bool isDebug = true,
   }) {
     StringBuffer buffer = StringBuffer();
 
     buffer.writeln("  /* ${method.toUpperCase()}: $name */");
-    buffer.writeln("  Future<Response> $name() async {");
+    buffer.writeln(
+      "  Future<Response> ${NameHelper().toCamelCase(name)}() async {",
+    );
     buffer.writeln("    final response = await Requests(");
     buffer.writeln("      method: Requests.$method,");
     buffer.writeln("      url: $url,");
     buffer.writeln("      data: {},");
     if (isAuth) {
       buffer.writeln("      isAuth: true,");
-    }
-    if (isDebug) {
-      buffer.writeln("      isDebug: true,");
     }
     buffer.writeln("    ).send();");
     buffer.writeln("    return response;");
@@ -41,18 +38,17 @@ class ServiceGenerator {
   }
 
   /// Generates the code for the service class.
-  String getServiceCode(List<String> functions) {
+  String getServiceCode(List<Map<String, String>> functions) {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper.toClassName('$name-service');
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:template/constants/app_apis.dart';");
     buffer.writeln("import 'package:template/helpers/request_helper.dart';");
     buffer.writeln("import 'package:template/models/response.dart';");
     buffer.writeln("");
     buffer.writeln("class $className {");
-    for (String func in functions) {
-      Map<String, String> data = CodeHelper.extractArg(func);
+    for (Map<String, String> data in functions) {
       buffer.write(
         getFunctionCode(
           name: data['func']!,
@@ -67,8 +63,8 @@ class ServiceGenerator {
     return buffer.toString();
   }
 
-  /// Generates the service file.
-  void generate(List<String> functionList) {
+  // Generates the service file.
+  void generate(List<Map<String, String>> functionList) {
     Terminal.printBold('\n1.Service Generated.');
 
     String defaultCode = getServiceCode(functionList);

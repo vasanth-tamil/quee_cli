@@ -4,7 +4,6 @@ import 'package:args/args.dart';
 import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/helper/file_helper.dart';
-import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/helper/validation_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
@@ -184,13 +183,80 @@ void main(List<String> arguments) async {
       } else if (optionSelected == 'Services') {
         final methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-        final selection =
-            Select(
-              prompt: 'Your service method ?',
-              options: methods,
+        String serviceName =
+            Input(
+              prompt: 'Enter your service name',
+              validator: (String input) {
+                if (input.trim().isEmpty) {
+                  throw ValidationError('Input cannot be empty.');
+                } else if (ValidationHelper.isValidInput(input)) {
+                  return true;
+                } else {
+                  throw ValidationError(
+                    'Invalid input provided. Only lowercase letters are allowed.',
+                  );
+                }
+              },
             ).interact();
 
-        print(selection);
+        // Functions
+        List<Map<String, String>> functionList = [];
+        bool isContinue;
+
+        do {
+          String funcName =
+              Input(
+                prompt: 'Enter your function name',
+                validator: (String input) {
+                  if (input.trim().isEmpty) {
+                    throw ValidationError('Input cannot be empty.');
+                  } else if (ValidationHelper.isValidInput(input)) {
+                    return true;
+                  } else {
+                    throw ValidationError(
+                      'Invalid input provided. Only lowercase letters are allowed.',
+                    );
+                  }
+                },
+              ).interact();
+
+          final selection =
+              Select(
+                prompt: 'Your service method ?',
+                options: methods,
+              ).interact();
+
+          functionList.add({
+            'func': funcName,
+            'method': methods.elementAt(selection),
+            'label': '$funcName (${methods.elementAt(selection)})',
+          });
+          isContinue =
+              Confirm(
+                prompt: 'Do you want to add another function ?',
+                defaultValue: true,
+                waitForNewLine: true,
+              ).interact();
+        } while (isContinue == true);
+
+        final sortedFunctions =
+            Sort(
+              prompt: 'Sort your functions ?',
+              options:
+                  functionList.map((e) => e['label']).toList().cast<String>(),
+              showOutput: false,
+            ).interact();
+
+        List<Map<String, String>> filteredFunctions = [];
+        for (var sort in sortedFunctions) {
+          for (var func in functionList) {
+            if (func['label'] == sort) {
+              filteredFunctions.add(func);
+            }
+          }
+        }
+
+        ServiceGenerator(serviceName).generate(filteredFunctions);
       } else if (optionSelected == 'Routes') {}
 
       return;
@@ -258,36 +324,6 @@ void main(List<String> arguments) async {
       );
 
       controllerGenerator.generate([]);
-    }
-
-    // Service
-    if (results.flag('service')) {
-      if (results.rest.isEmpty) {
-        Terminal.printError('No Service name provided.');
-        exit(1);
-      }
-
-      String name = results.rest[0];
-      ServiceGenerator serviceGenerator = ServiceGenerator(name);
-
-      if (results.rest.length < 2) {
-        Terminal.printWarning('No functions provided.');
-        bool useDefault = Terminal.askConfirmation('Use default functions');
-
-        if (!useDefault) return;
-
-        serviceGenerator.generate([
-          'fetchAll:get',
-          'fetchOne:get',
-          'fetchById:get',
-          'create:post',
-          'update:put',
-          'delete:delete',
-        ]);
-        return;
-      }
-
-      serviceGenerator.generate(results.rest.sublist(1));
     }
 
     // test
