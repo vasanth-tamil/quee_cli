@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/core/terminal.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 
@@ -6,9 +7,11 @@ class FileGenerator {
   void createFile(String outputPath, String fileName, String content) {
     // Check directory exists
     if (FileHelper.directoryExists(outputPath) == false) {
-      bool isConfirm = Terminal.askConfirmation(
-        'Can i create directory (Yes/no) ?',
-      );
+      bool isConfirm =
+          Confirm(
+            prompt: 'Can i create directory (Yes/no) ?',
+            defaultValue: true,
+          ).interact();
 
       if (isConfirm) {
         FileHelper.createDirectory(outputPath);

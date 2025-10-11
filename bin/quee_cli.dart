@@ -180,6 +180,36 @@ void main(List<String> arguments) async {
         ControllerGenerator(className, serviceName).generate(sortedFunctions);
       } else if (optionSelected == 'Models') {
       } else if (optionSelected == 'Pages') {
+        final pages = ['Stateful Page', 'Stateless Page'];
+
+        // Page Name
+        String name =
+            Input(
+              prompt: 'Enter your page name',
+              validator: (String input) {
+                if (input.trim().isEmpty) {
+                  throw ValidationError('Input cannot be empty.');
+                } else if (ValidationHelper.isValidInput(input)) {
+                  return true;
+                } else {
+                  throw ValidationError(
+                    'Invalid input provided. Only lowercase letters are allowed.',
+                  );
+                }
+              },
+            ).interact();
+
+        final selection =
+            Select(
+              prompt: 'Your service method ?',
+              options: pages,
+              initialIndex: 0,
+            ).interact();
+
+        String pageType = pages.elementAt(selection);
+        print(pageType);
+
+        PageGenerator(name).generate(selection);
       } else if (optionSelected == 'Services') {
         final methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
@@ -284,17 +314,6 @@ void main(List<String> arguments) async {
 
       List<String> routes = results.rest;
       RouteGenerator(routes, 'example/app_routes.dart').generate();
-    }
-
-    // Page
-    if (results.flag('page')) {
-      if (results.rest.isEmpty) {
-        Terminal.printError('No page name provided.');
-        exit(1);
-      }
-
-      String name = results.rest[0];
-      PageGenerator(name).generate();
     }
 
     // Model

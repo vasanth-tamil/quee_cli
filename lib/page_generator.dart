@@ -1,21 +1,19 @@
-import 'dart:io';
-
 import 'package:quee_cli/helper/name_helper.dart';
 import 'package:quee_cli/quee.dart';
 
-/// Generates a Flutter page.
+// Generates a Flutter page.
 class PageGenerator {
-  /// The name of the page.
+  // The name of the page.
   String name = '';
 
-  /// Creates a new instance of [PageGenerator].
+  // Creates a new instance of [PageGenerator].
   PageGenerator(this.name);
 
-  /// Generates the code for a stateful widget page.
+  // Generates the code for a stateful widget page.
   String getStatfulCode() {
     StringBuffer buffer = StringBuffer();
 
-    String className = NameHelper.toClassName('$name-page');
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(
@@ -50,11 +48,11 @@ class PageGenerator {
     return buffer.toString();
   }
 
-  /// Generates the code for a stateless widget page.
+  // Generates the code for a stateless widget page.
   String getStalessCode() {
     final buffer = StringBuffer();
 
-    String className = NameHelper.toClassName('$name-page');
+    String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln(
@@ -78,41 +76,16 @@ class PageGenerator {
   }
 
   /// Generates the page files.
-  void generate() {
+  void generate(int pageType) {
     String outputPath = 'output/pages';
-    String fileName = NameHelper.createFileName(name, suffix: 'page');
+    String fileName = "${NameHelper.toUnderscoreName(name)}.dart";
 
-    List<Map<String, dynamic>> options = [
-      {
-        'label': 'Stateful Page.',
-        'value': '1',
-        'action': () {
-          Terminal.printBold('\n1.Stateful Page Generated.');
-          String statefulCode = getStatfulCode();
-          print(statefulCode);
-          FileGenerator().createFile(outputPath, fileName, statefulCode);
-        },
-      },
-      {
-        'label': 'Stateless Page.',
-        'value': '2',
-        'action': () {
-          Terminal.printBold('\n2.Stateless Page Generated.');
-          String statelessCode = getStalessCode();
-          print(statelessCode);
-          FileGenerator().createFile(outputPath, fileName, statelessCode);
-        },
-      },
-      {
-        'label': 'Exit.',
-        'value': '0',
-        'action': () {
-          Terminal.printText('Bye.');
-          exit(0);
-        },
-      },
-    ];
-
-    Terminal.askOptionsWithInput('Page Options:', options);
+    if (pageType == 1) {
+      String statefulCode = getStatfulCode();
+      FileGenerator().createFile(outputPath, fileName, statefulCode);
+    } else if (pageType == 2) {
+      String statelessCode = getStalessCode();
+      FileGenerator().createFile(outputPath, fileName, statelessCode);
+    }
   }
 }
