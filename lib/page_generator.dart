@@ -4,10 +4,13 @@ import 'package:quee_cli/quee.dart';
 // Generates a Flutter page.
 class PageGenerator {
   // The name of the page.
-  String name = '';
+  String name;
+
+  // The output path for the generated file.
+  String output;
 
   // Creates a new instance of [PageGenerator].
-  PageGenerator(this.name);
+  PageGenerator({required this.name, this.output = 'output/pages'});
 
   // Generates the code for a stateful widget page.
   String getStatfulCode() {
@@ -77,15 +80,14 @@ class PageGenerator {
 
   // Generates the page files.
   void generate(int pageType) {
-    String outputPath = 'output/pages';
     String fileName = "${NameHelper.toUnderscoreName(name)}.dart";
 
-    if (pageType == 1) {
+    if (pageType == 0) {
       String statefulCode = getStatfulCode();
-      FileGenerator().createFile(outputPath, fileName, statefulCode);
-    } else if (pageType == 2) {
+      FileGenerator().createFile(output, fileName, statefulCode);
+    } else if (pageType == 1) {
       String statelessCode = getStalessCode();
-      FileGenerator().createFile(outputPath, fileName, statelessCode);
+      FileGenerator().createFile(output, fileName, statelessCode);
     }
   }
 }

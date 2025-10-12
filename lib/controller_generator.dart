@@ -3,14 +3,21 @@ import 'package:quee_cli/quee.dart';
 
 /// Generates a GetX controller class.
 class ControllerGenerator {
+  /// The output path for the generated file.
+  String output;
+
   /// The name of the controller.
-  String name = '';
+  String name;
 
   /// The name of the service to be injected.
-  String service = '';
+  String service;
 
   /// Creates a new instance of [ControllerGenerator].
-  ControllerGenerator(this.name, this.service);
+  ControllerGenerator({
+    required this.name,
+    required this.service,
+    this.output = 'output/controllers',
+  });
 
   /// Generates a function for the controller.
   StringBuffer getFunctionCode({required String name}) {
@@ -51,6 +58,7 @@ class ControllerGenerator {
     String className = NameHelper.toClassName(name);
 
     buffer.writeln("import 'package:get/get.dart';");
+    buffer.writeln("import 'package:template/helpers/log_helper.dart';");
     buffer.writeln(
       "import 'package:template/services/${NameHelper.toUnderscoreName(service)}.dart';",
     );
@@ -79,9 +87,9 @@ class ControllerGenerator {
 
   /// Generates the controller file.
   void generate(List<String> functionList) {
-    Terminal.printBold('\n1.Controller Generated.');
+    String fileName = '${NameHelper.toUnderscoreName(name)}.dart';
+    String code = getControllerCode(functionList);
 
-    String defaultCode = getControllerCode(functionList);
-    print(defaultCode);
+    FileGenerator().createFile(output, fileName, code);
   }
 }

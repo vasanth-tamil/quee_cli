@@ -4,10 +4,13 @@ import 'package:quee_cli/quee.dart';
 /// Generates a service class.
 class ServiceGenerator {
   /// The name of the service.
-  String name = '';
+  String name;
+
+  /// The output directory for the service file.
+  String output;
 
   /// Creates a new instance of [ServiceGenerator].
-  ServiceGenerator(this.name);
+  ServiceGenerator({required this.name, this.output = 'output/services'});
 
   /// Generates a function for the service.
   StringBuffer getFunctionCode({
@@ -66,11 +69,8 @@ class ServiceGenerator {
   // Generates the service file.
   void generate(List<Map<String, String>> functionList) {
     String serviceCode = getServiceCode(functionList);
-
-    String outputPath = 'output/services';
     String fileName = '${NameHelper.toUnderscoreName(name)}.dart';
 
-    Terminal.printBold('\n');
-    FileGenerator().createFile(outputPath, fileName, serviceCode);
+    FileGenerator().createFile(output, fileName, serviceCode);
   }
 }

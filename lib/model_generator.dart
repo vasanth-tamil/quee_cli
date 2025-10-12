@@ -11,7 +11,7 @@ class ModelGenerator {
   final String className;
 
   /// The path to output the generated file.
-  final String outputPath;
+  final String output;
 
   /// Whether to include a `toJson` method in the generated class.
   final bool toJson;
@@ -23,7 +23,7 @@ class ModelGenerator {
   ModelGenerator(
     this.jsonString, {
     this.className = 'test',
-    required this.outputPath,
+    this.output = 'output/models',
     this.toJson = false,
     this.fromJson = false,
   });
@@ -171,10 +171,8 @@ class ModelGenerator {
   /// Generates the model file.
   void generate() {
     String modelCode = jsonToModel();
-
-    String outputPath = 'output/models';
     String fileName = '${NameHelper.toUnderscoreName(className)}.dart';
 
-    FileGenerator().createFile(outputPath, fileName, modelCode);
+    FileGenerator().createFile(output, fileName, modelCode);
   }
 }

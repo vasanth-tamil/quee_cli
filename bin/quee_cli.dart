@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
+import 'package:quee_cli/core/quee_cli_config.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/helper/validation_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
 import 'package:quee_cli/service_generator.dart';
+import 'package:yaml/yaml.dart';
 
 const String version = '0.0.3';
 
@@ -23,24 +27,6 @@ ArgParser buildParser() {
       negatable: false,
       help: 'Show additional command output.',
     )
-    ..addFlag(
-      'widget',
-      abbr: 'w',
-      negatable: false,
-      help: 'Generates a new widget.',
-    )
-    ..addFlag(
-      'route',
-      abbr: 'r',
-      negatable: false,
-      help: 'Generates a new route and associates it with a page.',
-    )
-    ..addFlag(
-      'dialog',
-      abbr: 'd',
-      negatable: false,
-      help: 'Generates a new dialog.',
-    )
     ..addFlag('version', negatable: false, help: 'Print the tool version.');
 }
 
@@ -49,11 +35,43 @@ void printUsage(ArgParser argParser) {
   print(argParser.usage);
 }
 
+QueeCliConfig? readQueeCliConfig(String fileName) {
+  try {
+    // 1. Define the path to your config file
+    final configFile = File(fileName);
+
+    if (!configFile.existsSync()) {
+      print('Error: Configuration file not found at $fileName');
+      return null;
+    }
+    // 2. Read the config file
+    final yamlString = configFile.readAsStringSync();
+
+    // 3. Convert the YAML string to a Dart object
+    final yamlConfig = loadYaml(yamlString) as YamlMap;
+    final config = QueeCliConfig.fromJson(yamlConfig);
+
+    return config;
+  } on FileSystemException catch (e) {
+    print('File system error: $e');
+    return null;
+  } catch (e) {
+    print('An error occurred: $e');
+    return null;
+  }
+}
+
 void main(List<String> arguments) async {
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
     bool verbose = false;
+
+    QueeCliConfig? config = readQueeCliConfig('quee_config.yaml');
+
+    if (config != null) {
+      print(config.name);
+    }
 
     if (results.rest.isEmpty) {
       List<String> availableOptions = [
@@ -63,6 +81,7 @@ void main(List<String> arguments) async {
         'Services',
         'Dialogues',
         'Routes',
+        'Exit',
       ];
       final option =
           Select(
@@ -144,7 +163,11 @@ void main(List<String> arguments) async {
               showOutput: false,
             ).interact();
 
-        ControllerGenerator(className, serviceName).generate(sortedFunctions);
+        ControllerGenerator(
+          output: config!.settings!.controller!,
+          name: className,
+          service: serviceName,
+        ).generate(sortedFunctions);
       } else if (optionSelected == 'Models') {
         final jsonFiles = await FileHelper.listJsonFilesInDirectory(
           'example',
@@ -188,6 +211,14 @@ void main(List<String> arguments) async {
           models.add({'json': jsonFile, 'name': className});
         }
 
+        // Output
+        final output =
+            Select(
+              prompt: 'Select your output directory ?',
+              options: config!.settings!.model!,
+            ).interact();
+        String modelOutput = config.settings!.model!.elementAt(output);
+
         // toJson, fromJson
         final options = ['toJson', 'fromJson'];
         final selectedOptions =
@@ -209,7 +240,7 @@ void main(List<String> arguments) async {
           var modelGenerate = ModelGenerator(
             jsonString,
             className: name,
-            outputPath: 'output/models',
+            output: modelOutput,
             toJson: isToJson,
             fromJson: isFromJson,
           );
@@ -242,7 +273,10 @@ void main(List<String> arguments) async {
               initialIndex: 0,
             ).interact();
 
-        PageGenerator(name).generate(selection);
+        PageGenerator(
+          name: name,
+          output: config!.settings!.page!,
+        ).generate(selection);
       } else if (optionSelected == 'Services') {
         final methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
@@ -319,8 +353,15 @@ void main(List<String> arguments) async {
           }
         }
 
-        ServiceGenerator(serviceName).generate(filteredFunctions);
-      } else if (optionSelected == 'Routes') {}
+        ServiceGenerator(
+          name: serviceName,
+          output: config!.settings!.service!,
+        ).generate(filteredFunctions);
+      } else if (optionSelected == 'Routes') {
+      } else if (optionSelected == 'Dialogues') {
+      } else if (optionSelected == 'Exit') {
+        exit(0);
+      }
 
       return;
     }

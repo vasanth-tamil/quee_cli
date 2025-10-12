@@ -24,6 +24,20 @@ class FileGenerator {
     // Create file
     fileName = '$outputPath/$fileName';
 
+    if (FileHelper.fileExists(fileName)) {
+      bool isConfirm =
+          Confirm(
+            prompt: 'Can i overwrite file (Yes/no) ?',
+            defaultValue: true,
+          ).interact();
+
+      if (isConfirm == false) {
+        Terminal.printError('User declined to overwrite file.');
+        exit(0);
+      }
+    }
+
+    print('');
     FileHelper.createFile(fileName, content);
     Terminal.printSuccess('$fileName successfully generated.');
   }
