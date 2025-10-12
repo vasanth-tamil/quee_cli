@@ -1,5 +1,10 @@
 ## 1.0.0
 
+- Fix a bug in the `init` command.
+- Fixed a bug in the `add` command.
+
+## 1.0.0
+
 - Easy to use commandline interface.
 - Added documentation to all public API members.
 - Added an example to the project.
