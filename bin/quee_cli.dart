@@ -92,8 +92,8 @@ settings:
     - lib/models/response
 ''';
 
-        if (FileHelper.fileExists('quee_configs.yaml') == false) {
-          FileGenerator().createFile('.', 'quee_configs.yaml', content);
+        if (FileHelper.fileExists('quee_config.yaml') == false) {
+          FileGenerator().createFile('.', 'quee_config.yaml', content);
         } else {
           Terminal.printWarning('quee_configs.yaml already exists.');
           exit(1);
@@ -117,6 +117,14 @@ settings:
     }
 
     if (results.rest.isEmpty) {
+      // check if config file exists
+      if (FileHelper.fileExists('quee_config.yaml')) {
+        Terminal.printSuccess('found quee_config.yaml');
+      } else {
+        Terminal.printWarning('Run "quee_cli init" to create one.');
+        exit(1);
+      }
+
       List<String> availableOptions = [
         'Controllers',
         'Models',
@@ -403,6 +411,12 @@ settings:
         // Routes
         List<String> routes = [];
         bool isContinue = true;
+        if (FileHelper.fileExists(config.settings!.route!) == false) {
+          Terminal.printError(
+            'Route file not found: ${config.settings!.route!}',
+          );
+          exit(1);
+        }
         String code = File(config.settings!.route!).readAsStringSync();
 
         do {

@@ -34,7 +34,7 @@ class RouteGenerator {
 
     // Read the file
     final pattern = RegExp(r'static\s+List<GetPage>\s+routes\s*=\s*\[');
-    String code = File(routeFile).readAsStringSync();
+    String code = File(routeFile).readAsStringSync().trim();
 
     final match = pattern.firstMatch(code);
 
