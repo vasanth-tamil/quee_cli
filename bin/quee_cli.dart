@@ -13,7 +13,8 @@ import 'package:quee_cli/route_generator.dart';
 import 'package:quee_cli/service_generator.dart';
 import 'package:yaml/yaml.dart';
 
-const String version = '0.0.3';
+const String version = '1.0.1';
+const String yamlFilename = 'quee_config.yaml';
 
 ArgParser buildParser() {
   return ArgParser()
@@ -48,9 +49,8 @@ QueeCliConfig? readQueeCliConfig(String fileName) {
     }
     // 2. Read the config file
     final yamlString = configFile.readAsStringSync();
-
-    // 3. Convert the YAML string to a Dart object
     final yamlConfig = loadYaml(yamlString) as YamlMap;
+
     final config = QueeCliConfig.fromJson(yamlConfig);
 
     return config;
@@ -69,13 +69,6 @@ void main(List<String> arguments) async {
     final ArgResults results = argParser.parse(arguments);
     bool verbose = false;
 
-    QueeCliConfig? config = readQueeCliConfig('quee_config.yaml');
-
-    if (config == null) {
-      Terminal.printWarning('Using configuration file: quee_config.yaml');
-      exit(1);
-    }
-
     if (results.rest.isNotEmpty) {
       if (results.rest[0] == 'init') {
         String content = '''
@@ -87,6 +80,7 @@ settings:
   page: lib/pages
   controller: lib/controllers
   service: lib/services
+  json: lib/models/json
   model:
     - lib/models/request
     - lib/models/response
@@ -114,6 +108,14 @@ settings:
         await Future.delayed(const Duration(seconds: 1));
         gift.done();
       }
+    }
+
+    // check if config file exists
+    QueeCliConfig? config = readQueeCliConfig('quee_config.yaml');
+
+    if (config == null) {
+      Terminal.printWarning('Using configuration file: quee_config.yaml');
+      exit(1);
     }
 
     if (results.rest.isEmpty) {
@@ -219,9 +221,15 @@ settings:
           service: serviceName,
         ).generate(sortedFunctions);
       } else if (optionSelected == 'Models') {
+        String jsonFolder = config.settings!.jsonFolder ?? 'lib/models/json';
+
         final jsonFiles = await FileHelper.listJsonFilesInDirectory(
-          'example',
-        ).then((value) => value.map((e) => e.path.split('/').last).toList());
+          jsonFolder,
+        ).then(
+          (value) => value.map((e) => e.path.replaceAll('\\', '/')).toList(),
+        );
+
+        print(jsonFiles);
 
         final selectedJsonFiles =
             MultiSelect(
@@ -237,7 +245,7 @@ settings:
         for (var index in selectedJsonFiles) {
           String jsonFile = jsonFiles.elementAt(index);
           String defaultClassName = jsonFile
-              .split(r'\')
+              .split(r'/')
               .last
               .split('.')[0]
               .replaceAll('_', '-');

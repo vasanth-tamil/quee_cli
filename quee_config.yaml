@@ -1,11 +1,12 @@
 name: quee_cli
-version: 0.0.4
+version: 1.0.1
 
 settings:
-  route: lib/app_routes.dart
+  route: lib/constants/app_routes.dart
   page: lib/pages
   controller: lib/controllers
   service: lib/services
+  json: example
   model:
     - lib/models/request
     - lib/models/response

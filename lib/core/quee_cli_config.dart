@@ -30,15 +30,24 @@ class Settings {
   String? page;
   String? controller;
   String? service;
+  String? jsonFolder;
   List<String>? model;
 
-  Settings({this.route, this.page, this.controller, this.service, this.model});
+  Settings({
+    this.route,
+    this.page,
+    this.controller,
+    this.service,
+    this.jsonFolder,
+    this.model,
+  });
 
   Settings.fromJson(YamlMap json) {
     route = json['route'];
     page = json['page'];
     controller = json['controller'];
     service = json['service'];
+    jsonFolder = json['json'];
     model = json['model'].cast<String>();
   }
 
@@ -48,6 +57,7 @@ class Settings {
     data['page'] = page;
     data['controller'] = controller;
     data['service'] = service;
+    data['json'] = jsonFolder;
     data['model'] = model;
     return data;
   }
