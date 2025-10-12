@@ -12,11 +12,9 @@ class AppRoutes {
   static String forgetPassword = '/address';
   static String otp = '/otp';
 
-  static String address = 'address';
-  static String dashboard = 'dashboard';
-  
-  static String homePage = 'home-page';
-  static String auth = 'auth';
+  static String signIn = '/sign-in';
+  static String signOut = '/sign-out';
+  static String logout = '/logout';
   
   static List<GetPage> routes = [
     // INTRO PAGE
@@ -25,9 +23,9 @@ class AppRoutes {
     // HOME PAGE
     GetPage(name: AppRoutes.home, page: () => const InitPage()),
     GetPage(name: AppRoutes.address, page: () => const AddressPage()),
+    GetPage(name: AppConstants.signIn, page: () => const EmptyPage()),
+    GetPage(name: AppConstants.signOut, page: () => const EmptyPage()),
+    GetPage(name: AppConstants.logout, page: () => const EmptyPage()),
+
   ];
 }
-
-
-
-

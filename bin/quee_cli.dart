@@ -4,10 +4,12 @@ import 'package:args/args.dart';
 import 'package:interact_cli/interact_cli.dart';
 import 'package:quee_cli/controller_generator.dart';
 import 'package:quee_cli/core/quee_cli_config.dart';
+import 'package:quee_cli/helper/code_helper.dart';
 import 'package:quee_cli/helper/file_helper.dart';
 import 'package:quee_cli/helper/validation_helper.dart';
 import 'package:quee_cli/page_generator.dart';
 import 'package:quee_cli/quee.dart';
+import 'package:quee_cli/route_generator.dart';
 import 'package:quee_cli/service_generator.dart';
 import 'package:yaml/yaml.dart';
 
@@ -69,8 +71,9 @@ void main(List<String> arguments) async {
 
     QueeCliConfig? config = readQueeCliConfig('quee_config.yaml');
 
-    if (config != null) {
-      print(config.name);
+    if (config == null) {
+      Terminal.printWarning('Using configuration file: quee_config.yaml');
+      exit(1);
     }
 
     if (results.rest.isEmpty) {
@@ -164,7 +167,7 @@ void main(List<String> arguments) async {
             ).interact();
 
         ControllerGenerator(
-          output: config!.settings!.controller!,
+          output: config.settings!.controller!,
           name: className,
           service: serviceName,
         ).generate(sortedFunctions);
@@ -215,7 +218,7 @@ void main(List<String> arguments) async {
         final output =
             Select(
               prompt: 'Select your output directory ?',
-              options: config!.settings!.model!,
+              options: config.settings!.model!,
             ).interact();
         String modelOutput = config.settings!.model!.elementAt(output);
 
@@ -275,7 +278,7 @@ void main(List<String> arguments) async {
 
         PageGenerator(
           name: name,
-          output: config!.settings!.page!,
+          output: config.settings!.page!,
         ).generate(selection);
       } else if (optionSelected == 'Services') {
         final methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -355,9 +358,66 @@ void main(List<String> arguments) async {
 
         ServiceGenerator(
           name: serviceName,
-          output: config!.settings!.service!,
+          output: config.settings!.service!,
         ).generate(filteredFunctions);
       } else if (optionSelected == 'Routes') {
+        // Routes
+        List<String> routes = [];
+        bool isContinue = true;
+        String code = File(config.settings!.route!).readAsStringSync();
+
+        do {
+          String routeName =
+              Input(
+                prompt: 'Enter your route name',
+                validator: (String input) {
+                  if (input.trim().isEmpty) {
+                    throw ValidationError('Input cannot be empty.');
+                  } else if (ValidationHelper.isValidInput(input)) {
+                    return true;
+                  } else {
+                    throw ValidationError(
+                      'Invalid input provided. Only lowercase letters are allowed.',
+                    );
+                  }
+                },
+              ).interact();
+
+          if (routes.contains(routeName)) {
+            Terminal.printWarning(
+              'Route name already exists. Please try again.',
+            );
+            continue;
+          }
+
+          if (CodeHelper.hasRouteConstant(code, routeName)) {
+            Terminal.printWarning(
+              'Route name already exists. Please try again.',
+            );
+            continue;
+          }
+
+          routes.add(routeName);
+          isContinue =
+              Confirm(
+                prompt: 'Do you want to add another route ?',
+                defaultValue: true,
+                waitForNewLine: true,
+              ).interact();
+        } while (isContinue == true);
+
+        final sortedRoutes =
+            Sort(
+              prompt: 'Sort your functions ?',
+              options: routes,
+              showOutput: false,
+            ).interact();
+
+        // Generate routes
+        RouteGenerator(
+          routeFile: config.settings!.route!,
+          routes: sortedRoutes,
+        ).generate();
       } else if (optionSelected == 'Dialogues') {
       } else if (optionSelected == 'Exit') {
         exit(0);

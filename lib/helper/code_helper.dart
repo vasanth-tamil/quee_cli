@@ -1,6 +1,13 @@
+import 'dart:core';
+
 class CodeHelper {
-  static Map<String, String> extractArg(String arg) {
-    var codes = arg.split(':');
-    return {'func': codes[0], 'method': codes[1]};
+  static bool hasRouteConstant(String c, String routeName) {
+    String escapedRouteName = RegExp.escape(routeName);
+    final String pattern =
+        "static String \\w+ = ['\"]/?$escapedRouteName['\"];";
+
+    final RegExp routePattern = RegExp(pattern);
+
+    return routePattern.hasMatch(c);
   }
 }
