@@ -48,10 +48,10 @@ class RouteGenerator {
       for (var name in routes) {
         String routeName = NameHelper().toCamelCase(name);
         String route = NameHelper().toDashCase(name);
-        customString += "static String $routeName = '/$route';\n  ";
 
+        customString += "static String $routeName = '/$route';\n  ";
         routeListString +=
-            '    GetPage(name: AppConstants.$routeName, page: () => const EmptyPage()),\n';
+            '    GetPage(name: AppConstants.$routeName, page: () => const Container()),\n';
 
         Terminal.printText(
           "Route added: static String /$routeName = '$route';",

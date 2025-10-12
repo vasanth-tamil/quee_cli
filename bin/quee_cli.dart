@@ -76,13 +76,52 @@ void main(List<String> arguments) async {
       exit(1);
     }
 
+    if (results.rest.isNotEmpty) {
+      if (results.rest[0] == 'init') {
+        String content = '''
+name: quee_cli
+version: $version
+
+settings:
+  route: lib/constants/app_routes.dart
+  page: lib/pages
+  controller: lib/controllers
+  service: lib/services
+  model:
+    - lib/models/request
+    - lib/models/response
+''';
+
+        if (FileHelper.fileExists('quee_configs.yaml') == false) {
+          FileGenerator().createFile('.', 'quee_configs.yaml', content);
+        } else {
+          Terminal.printWarning('quee_configs.yaml already exists.');
+          exit(1);
+        }
+
+        final gift =
+            Spinner(
+              icon: '🎁',
+              leftPrompt: (done) => '',
+              rightPrompt:
+                  (state) => switch (state) {
+                    SpinnerStateType.inProgress => 'Processing...',
+                    SpinnerStateType.done => 'Done!',
+                    SpinnerStateType.failed => 'Failed!',
+                  },
+            ).interact();
+
+        await Future.delayed(const Duration(seconds: 1));
+        gift.done();
+      }
+    }
+
     if (results.rest.isEmpty) {
       List<String> availableOptions = [
         'Controllers',
         'Models',
         'Pages',
         'Services',
-        'Dialogues',
         'Routes',
         'Exit',
       ];
