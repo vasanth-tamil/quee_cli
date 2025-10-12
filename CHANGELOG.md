@@ -1,3 +1,13 @@
+## 1.0.0
+
+- Easy to use commandline interface.
+- Added documentation to all public API members.
+- Added an example to the project.
+- Fixed executable in `pubspec.yaml`.
+- Configured `pubspec.yaml` for `interact_cli` to be used with `quee`.
+- `quee_config.yaml` added.
+- Updated `lints` dependency.
+
 ## 0.0.4
 
 - Added documentation to all public API members.
